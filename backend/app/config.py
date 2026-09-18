@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     cors_origins: Annotated[list[str], NoDecode] = [
         "http://localhost:3000",
         "http://localhost:5173",
+        "http://localhost:4173",
     ]
 
     # Optional overrides of the thresholds saved with the model (validation-selected).

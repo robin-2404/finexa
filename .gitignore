@@ -1,0 +1,31 @@
+# Raw data and generated state
+data/
+artifacts/
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+*.db
+*.csv
+*.zip
+
+# Trained binaries
+*.joblib
+*.pkl
+
+# Secrets / environment
+.env
+.env.*
+!.env.example
+!backend/.env.example
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Frontend
+node_modules/
+frontend/dist/
+*.tsbuildinfo
