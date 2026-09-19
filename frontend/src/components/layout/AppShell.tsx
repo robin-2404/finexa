@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Activity, ChevronsUpDown, DatabaseZap, FlaskConical, LayoutDashboard, LogOut, Menu, PanelLeftClose, PanelLeftOpen, ScanSearch, ServerCrash, Wifi } from "lucide-react";
+import { motion } from "motion/react";
 import { toast } from "sonner";
 import { useAuth } from "@/auth/AuthProvider";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,7 @@ const TITLES: [RegExp, string][] = [
 ];
 const titleFor = (path: string) => TITLES.find(([re]) => re.test(path))?.[1] ?? "FINEXA";
 
-function NavList({ collapsed, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) {
+function NavList({ collapsed, onNavigate, indicatorId }: { collapsed?: boolean; onNavigate?: () => void; indicatorId: string }) {
   return (
     <nav aria-label="Primary" className="flex flex-col gap-1 px-3">
       {NAV.map(({ to, label, icon: Icon }) => (
@@ -40,14 +41,25 @@ function NavList({ collapsed, onNavigate }: { collapsed?: boolean; onNavigate?: 
               aria-label={collapsed ? label : undefined}
               className={({ isActive }) =>
                 cn(
-                  "group flex h-10 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors",
-                  isActive ? "bg-navy-700 text-white shadow-[inset_2px_0_0_#2dd4bf]" : "text-navy-200 hover:bg-navy-800 hover:text-white",
+                  "group relative flex h-11 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors",
+                  isActive ? "text-white" : "text-navy-200 hover:bg-navy-800 hover:text-white",
                   collapsed && "justify-center px-0",
                 )
               }
             >
-              <Icon className="size-[18px] shrink-0" aria-hidden />
-              {!collapsed && <span>{label}</span>}
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <motion.span
+                      layoutId={indicatorId}
+                      className="absolute inset-0 rounded-md bg-navy-700 shadow-[inset_2px_0_0_#2dd4bf]"
+                      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                  )}
+                  <Icon className="relative size-[18px] shrink-0" aria-hidden />
+                  {!collapsed && <span className="relative">{label}</span>}
+                </>
+              )}
             </NavLink>
           </TooltipTrigger>
           {collapsed && <TooltipContent side="right">{label}</TooltipContent>}
@@ -216,7 +228,7 @@ export function AppShell() {
             {collapsed ? <Wordmark className="[&>span:last-child]:hidden" dark /> : <Wordmark dark />}
           </Link>
         </div>
-        <div className="mt-3 flex-1"><NavList collapsed={collapsed} /></div>
+        <div className="mt-3 flex-1"><NavList collapsed={collapsed} indicatorId="nav-active-desktop" /></div>
         <div className={cn("border-t border-navy-800 p-3", collapsed && "flex justify-center")}>
           <Button
             variant="ghost" size={collapsed ? "icon" : "sm"}
@@ -235,7 +247,7 @@ export function AppShell() {
         <DialogContent side="left" className="bg-navy-900 text-white" hideClose aria-describedby={undefined}>
           <DialogTitle className="sr-only">Navigation</DialogTitle>
           <div className="flex h-14 items-center px-5"><Wordmark dark /></div>
-          <div className="mt-3"><NavList onNavigate={() => setDrawer(false)} /></div>
+          <div className="mt-3"><NavList onNavigate={() => setDrawer(false)} indicatorId="nav-active-drawer" /></div>
         </DialogContent>
       </Dialog>
 
@@ -259,7 +271,9 @@ export function AppShell() {
 
         <main id="main" tabIndex={-1} className="mx-auto w-full max-w-[1400px] px-4 py-6 outline-none md:px-8 md:py-8">
           <HealthBanner />
-          {notReady ? <NotReadyPanel /> : <Outlet />}
+          <motion.div key={location.pathname} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}>
+            {notReady ? <NotReadyPanel /> : <Outlet />}
+          </motion.div>
         </main>
       </div>
     </div>

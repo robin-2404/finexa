@@ -27,6 +27,16 @@ src/pages/       Home, Login, Signup, Overview, Monitor, Investigation, Transact
 src/test/        interaction tests (auth flows, stream hook, policy rehearsal, case saving)
 ```
 
+## Visual system
+
+- **`components/ui/prism-hero.tsx` + `prism-scene.tsx`**: dark cinematic hero. The crystal is a real Three.js / React Three Fiber scene (icosahedron with `MeshTransmissionMaterial`, chromatic aberration, procedural `Lightformer` lighting with no HDR download, drifting motes). The three.js code is a separate lazy chunk that only the homepage loads.
+  - *Adaptive quality:* `detectQuality()` picks `high | medium | low` from viewport width, CPU cores, device memory and pointer type; each tier changes DPR, transmission buffer size, samples and mote count.
+  - *Rendering budget:* the render loop is `never` while the hero is off-screen or the tab is hidden, and `demand` (one still frame) under `prefers-reduced-motion`.
+  - *Failure handling:* no WebGL, or a scene error, falls back to a static SVG crystal via an error boundary. The crystal lives in its own block (below the copy on phones), so it can't cover text or buttons.
+- **`components/ui/constellation-grid.tsx`**: canvas node grid with spring physics, pointer repulsion, click shockwaves, periodic radar rings, and coordinate labels near the cursor. Decorative (`aria-hidden`, `pointer-events: none`, listens on `window`). Pauses off-screen and on hidden tabs, caps DPR, paints one still frame under reduced motion, and removes all listeners and frames on unmount. Used on the homepage hero/technology/CTA sections, the auth panel, and the idle Live Monitor empty state. It is deliberately **not** used behind working data screens.
+- **Motion** (`motion/react`): page fade, sidebar active indicator, scroll reveals, accordion. `<MotionConfig reducedMotion="user">` wraps the app. CSS covers hover/press states, and a global `prefers-reduced-motion` rule removes decorative movement.
+- React is pinned to `~19.2` because `@react-three/fiber` 9.x declares `react <19.3`.
+
 ## Design rules that are enforced in code
 
 - Data comes only from API responses. Failures render an error state with retry; nothing is substituted.

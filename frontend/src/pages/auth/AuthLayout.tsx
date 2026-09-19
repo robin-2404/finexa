@@ -2,13 +2,16 @@ import { useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { Wordmark } from "@/components/layout/Logo";
+import { ConstellationGrid } from "@/components/ui/constellation-grid";
 import { Input } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 
 export function AuthLayout({ title, subtitle, children, footer }: { title: string; subtitle: string; children: ReactNode; footer: ReactNode }) {
   return (
     <div className="grid grid-cols-1 min-h-dvh lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
-      <aside className="relative hidden flex-col justify-between bg-navy-900 p-10 text-white lg:flex">
+      <aside className="relative isolate hidden flex-col justify-between overflow-hidden bg-[#030407] p-10 text-white lg:flex">
+        <div className="absolute inset-0 -z-10"><ConstellationGrid theme="dark" spacing={62} intensity={1.15} /></div>
+        <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_35%_45%,rgba(3,4,7,0.72)_0%,rgba(3,4,7,0.3)_60%,rgba(3,4,7,0)_100%)]" />
         <Link to="/" aria-label="FINEXA home"><Wordmark dark /></Link>
         <div className="max-w-md">
           <h2 className="text-2xl font-semibold leading-snug tracking-tight">Understand fraud risk. Investigate with confidence.</h2>

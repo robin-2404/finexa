@@ -7,6 +7,7 @@ import { api } from "@/api/endpoints";
 import { ApiError } from "@/api/client";
 import type { RiskBand, SimAction, SimulationEvent, SimulationState } from "@/api/types";
 import { AnalyzeDrawer } from "@/features/AnalyzeDrawer";
+import { ConstellationGrid } from "@/components/ui/constellation-grid";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/form";
@@ -187,6 +188,8 @@ export function MonitorPage() {
               )}
               {visible.length === 0 ? (
                 <EmptyState
+                  className="min-h-64"
+                  visual={<ConstellationGrid theme="light" spacing={64} intensity={0.9} showLabels={false} interactive={false} />}
                   icon={<Search className="size-5" aria-hidden />}
                   title={stream.events.length === 0 ? (s?.status === "idle" ? "The replay hasn't started" : "Waiting for events…") : "No events match this risk filter"}
                 >

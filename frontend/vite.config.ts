@@ -7,6 +7,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: { alias: { "@": path.resolve(__dirname, "src") } },
+  optimizeDeps: { include: ["three", "@react-three/fiber", "@react-three/drei", "motion/react"] },
   server: { port: 5173, strictPort: true },
   preview: { port: 4173, strictPort: true },
   test: {

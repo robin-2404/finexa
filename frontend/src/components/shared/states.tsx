@@ -4,9 +4,15 @@ import { ApiError } from "@/api/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export function EmptyState({ title, children, action, icon, className }: { title: string; children?: ReactNode; action?: ReactNode; icon?: ReactNode; className?: string }) {
+export function EmptyState({ title, children, action, icon, className, visual }: { title: string; children?: ReactNode; action?: ReactNode; icon?: ReactNode; className?: string; visual?: ReactNode }) {
   return (
-    <div className={cn("flex flex-col items-center justify-center gap-2 px-6 py-12 text-center", className)}>
+    <div className={cn("relative isolate flex flex-col items-center justify-center gap-2 overflow-hidden px-6 py-12 text-center", className)}>
+      {visual && (
+        <div className="absolute inset-0 -z-10">
+          {visual}
+          <div aria-hidden className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.92)_0%,rgba(255,255,255,0.6)_55%,rgba(255,255,255,0.15)_100%)]" />
+        </div>
+      )}
       <div className="grid size-10 place-items-center rounded-full bg-muted text-muted-foreground">{icon ?? <Inbox className="size-5" aria-hidden />}</div>
       <p className="text-sm font-semibold">{title}</p>
       {children && <p className="max-w-md text-[13px] text-muted-foreground">{children}</p>}
