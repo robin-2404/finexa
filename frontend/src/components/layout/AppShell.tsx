@@ -148,13 +148,16 @@ function AccountMenu() {
           <ChevronsUpDown className="size-3.5 text-shell-text-muted" aria-hidden />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>
+      <DropdownMenuContent align="end" className="border-shell-border bg-shell-elevated shadow-[0_16px_40px_-12px_rgba(2,6,23,0.55)]">
+        <DropdownMenuLabel className="text-shell-text-muted">
           Signed in as
-          <span className="block truncate text-sm font-medium text-foreground">{user?.email}</span>
+          <span className="block truncate text-sm font-medium text-shell-text">{user?.email}</span>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={(e) => { e.preventDefault(); if (!busy) void onLogout(); }} disabled={busy}>
+        <DropdownMenuSeparator className="bg-shell-border" />
+        <DropdownMenuItem
+          className="text-shell-text data-[highlighted]:bg-shell-navy/60 data-[highlighted]:text-shell-text [&_svg]:text-shell-text-muted"
+          onSelect={(e) => { e.preventDefault(); if (!busy) void onLogout(); }} disabled={busy}
+        >
           <LogOut aria-hidden /> {busy ? "Signing out…" : "Log out"}
         </DropdownMenuItem>
       </DropdownMenuContent>
