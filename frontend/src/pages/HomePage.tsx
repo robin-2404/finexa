@@ -20,9 +20,12 @@ function Nav() {
       <div className="mx-auto flex h-16 max-w-[1240px] items-center justify-between gap-4 px-5">
         <Link to="/" aria-label="FINEXA home" className="rounded-md"><Wordmark dark /></Link>
         <nav aria-label="Main" className="hidden items-center gap-8 text-sm text-[rgba(237,232,223,0.7)] md:flex">
-          <a href="#features" className="rounded transition-colors hover:text-white">Features</a>
-          <a href="#how-it-works" className="rounded transition-colors hover:text-white">How it works</a>
-          <a href="#faq" className="rounded transition-colors hover:text-white">FAQ</a>
+          {[["#features", "Features"], ["#how-it-works", "How it works"], ["#faq", "FAQ"]].map(([href, label]) => (
+            <a key={href} href={href} className="group/nav relative rounded py-1 transition-colors hover:text-white">
+              {label}
+              <span className="absolute inset-x-0 -bottom-0.5 h-px scale-x-0 bg-cyan-300/70 transition-transform duration-200 ease-out group-hover/nav:scale-x-100" aria-hidden />
+            </a>
+          ))}
         </nav>
         <div className="flex items-center gap-2">
           {signedIn ? (
@@ -54,8 +57,9 @@ function ProductPreview() {
     { ref: "TXN-000000", t: "T+00:00:21", amt: "57.20", s: 0.07, b: "Low", c: "bg-success-soft text-success" },
   ];
   return (
-    <figure className="relative" aria-label="Illustrative product preview">
-      <div className="overflow-hidden rounded-xl border bg-background text-foreground shadow-[0_30px_70px_-30px_rgba(11,26,48,0.45)]">
+    <figure className="group relative" aria-label="Illustrative product preview">
+      <div aria-hidden className="absolute -inset-6 -z-10 rounded-[28px] bg-[radial-gradient(closest-side,rgba(11,127,138,0.16),transparent)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+      <div className="overflow-hidden rounded-xl border bg-background text-foreground shadow-[0_30px_70px_-30px_rgba(11,26,48,0.45)] transition-transform duration-500 ease-out group-hover:-translate-y-1">
         <div className="flex items-center gap-2 border-b bg-card px-4 py-2.5" aria-hidden>
           <span className="size-2.5 rounded-full bg-border" /><span className="size-2.5 rounded-full bg-border" /><span className="size-2.5 rounded-full bg-border" />
           <span className="ml-3 text-xs text-muted-foreground">Overview</span>
@@ -220,13 +224,13 @@ export function HomePage() {
             </Reveal>
             <div className="mt-12 space-y-14">
               {FEATURES.map((f, i) => (
-                <Reveal key={f.title} className="grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-14">
+                <Reveal key={f.title} className="group grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-14">
                   <div className={cn(i % 2 === 1 && "md:order-2")}>
-                    <span className="grid size-10 place-items-center rounded-lg bg-primary-soft text-primary-ink"><f.icon className="size-5" aria-hidden /></span>
+                    <span className="grid size-10 place-items-center rounded-lg bg-primary-soft text-primary-ink transition-transform duration-300 group-hover:scale-110"><f.icon className="size-5" aria-hidden /></span>
                     <h3 className="mt-4 text-xl font-semibold tracking-tight">{f.title}</h3>
                     <p className="mt-2 max-w-md leading-relaxed text-muted-foreground">{f.body}</p>
                   </div>
-                  <div className={cn("h-52 overflow-hidden rounded-xl border bg-muted/60", i % 2 === 1 && "md:order-1")} role="img" aria-label={`Schematic illustration for ${f.title}`}>
+                  <div className={cn("h-52 overflow-hidden rounded-xl border bg-muted/60 transition-all duration-300 group-hover:-translate-y-1 group-hover:border-primary/30 group-hover:shadow-pop", i % 2 === 1 && "md:order-1")} role="img" aria-label={`Schematic illustration for ${f.title}`}>
                     {f.visual}
                   </div>
                 </Reveal>
@@ -255,7 +259,7 @@ export function HomePage() {
                   ["Prevalence from labels", "Known fraud rates come from the labelled training split."],
                   ["Small groups flagged", "Groups with very few fraud cases are marked as unreliable."],
                 ].map(([t, d]) => (
-                  <div key={t} className="rounded-xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-sm">
+                  <div key={t} className="rounded-xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-cyan-300/25 hover:bg-white/[0.06]">
                     <dt className="text-sm font-semibold text-[#F3EFE7]">{t}</dt>
                     <dd className="mt-1.5 text-[13px] leading-relaxed text-[rgba(237,232,223,0.6)]">{d}</dd>
                   </div>
@@ -272,7 +276,7 @@ export function HomePage() {
             <ol className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-4">
               {STEPS.map((s, i) => (
                 <li key={s.t} className="relative">
-                  <Reveal delay={i * 0.05} className="h-full rounded-xl border bg-card p-5 shadow-card">
+                  <Reveal delay={i * 0.05} className="h-full rounded-xl border bg-card p-5 shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-pop">
                     <div className="flex items-center gap-3">
                       <span className="tabular grid size-9 place-items-center rounded-full bg-navy-900 text-sm font-semibold text-white">{i + 1}</span>
                       <s.icon className="size-5 text-primary" aria-hidden />

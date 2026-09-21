@@ -5,14 +5,14 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,background-color,border-color,transform] duration-150 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/btn inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,background-color,border-color,transform,box-shadow] duration-200 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-transform [&_svg]:duration-200 [&_svg:not([class*='size-'])]:size-4 [&_svg:last-child]:group-hover/btn:translate-x-0.5",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground shadow-card hover:bg-primary-hover",
-        secondary: "border border-input bg-card text-foreground hover:bg-accent",
+        default: "bg-primary text-primary-foreground shadow-card hover:-translate-y-px hover:bg-primary-hover hover:shadow-pop",
+        secondary: "border border-input bg-card text-foreground hover:-translate-y-px hover:bg-accent",
         ghost: "text-foreground hover:bg-accent",
-        outline: "border border-input bg-transparent text-foreground hover:bg-accent",
+        outline: "border border-input bg-transparent text-foreground hover:-translate-y-px hover:bg-accent",
         destructive: "bg-danger text-white hover:bg-danger/90",
         navy: "bg-navy-900 text-white hover:bg-navy-800",
         link: "h-auto p-0 text-primary underline-offset-4 hover:underline",
