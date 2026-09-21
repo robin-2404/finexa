@@ -137,7 +137,7 @@ export function PrismHero({ eyebrow, headline, description, meta, action, second
       <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_28%_45%,rgba(3,4,7,0.92)_0%,rgba(3,4,7,0.55)_48%,rgba(3,4,7,0.15)_100%)]" />
       <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-32 bg-gradient-to-t from-[#030407] to-transparent" />
 
-      <div className="mx-auto grid max-w-[1240px] grid-cols-1 items-center gap-2 px-5 pb-10 pt-14 lg:min-h-[min(780px,90vh)] lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:gap-6 lg:pb-16 lg:pt-20">
+      <div className="mx-auto grid max-w-[1240px] grid-cols-1 items-center gap-2 px-5 pb-10 pt-14 min-h-[100svh] lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:gap-6 lg:pb-16 lg:pt-20">
         <div className="relative z-10">
           <motion.p
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
@@ -147,7 +147,7 @@ export function PrismHero({ eyebrow, headline, description, meta, action, second
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-            className="text-[36px] font-semibold leading-[1.06] tracking-[-0.025em] text-[#F3EFE7] sm:text-[48px] lg:text-[58px]"
+            className="text-[38px] font-semibold leading-[1.04] tracking-[-0.03em] text-[#F3EFE7] sm:text-[54px] lg:text-[66px]"
           >
             {headline}
           </motion.h1>
@@ -183,6 +183,19 @@ export function PrismHero({ eyebrow, headline, description, meta, action, second
           <PrismCanvas sectionRef={ref} />
         </div>
       </div>
+
+      <motion.div
+        aria-hidden
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.6 }}
+        className="pointer-events-none absolute inset-x-0 bottom-6 hidden justify-center lg:flex"
+      >
+        <motion.div
+          animate={{ y: [0, 7, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          className="flex h-9 w-6 items-start justify-center rounded-full border border-white/20 p-1.5"
+        >
+          <span className="size-1 rounded-full bg-cyan-300/80" />
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

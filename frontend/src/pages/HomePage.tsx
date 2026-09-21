@@ -1,45 +1,83 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Activity, ArrowRight, Database, FlaskConical, Gauge, LayoutDashboard, ScanSearch, ShieldCheck, SlidersHorizontal } from "lucide-react";
+import { Activity, ArrowRight, Database, FlaskConical, Gauge, LayoutDashboard, Menu, ScanSearch, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { useAuth } from "@/auth/AuthProvider";
 import { Wordmark } from "@/components/layout/Logo";
 import { Reveal } from "@/components/shared/Reveal";
 import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { ConstellationGrid } from "@/components/ui/constellation-grid";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/overlay";
 import { PrismHero } from "@/components/ui/prism-hero";
 import { cn } from "@/lib/utils";
 
 const darkGhost = "border-white/25 bg-white/[0.03] text-white hover:bg-white/10 hover:text-white";
+const SECTIONS: [string, string][] = [["#features", "Features"], ["#how-it-works", "How it works"], ["#faq", "FAQ"]];
 
 function Nav() {
   const { status } = useAuth();
   const signedIn = status === "authenticated";
+  const [open, setOpen] = useState(false);
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-[#030407]/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-[1240px] items-center justify-between gap-4 px-5">
         <Link to="/" aria-label="FINEXA home" className="rounded-md"><Wordmark dark /></Link>
         <nav aria-label="Main" className="hidden items-center gap-8 text-sm text-[rgba(237,232,223,0.7)] md:flex">
-          <a href="#features" className="rounded transition-colors hover:text-white">Features</a>
-          <a href="#how-it-works" className="rounded transition-colors hover:text-white">How it works</a>
-          <a href="#faq" className="rounded transition-colors hover:text-white">FAQ</a>
+          {SECTIONS.map(([href, label]) => (
+            <a key={href} href={href} className="group/nav relative rounded py-1 transition-colors hover:text-white">
+              {label}
+              <span className="absolute inset-x-0 -bottom-0.5 h-px scale-x-0 bg-cyan-300/70 transition-transform duration-200 ease-out group-hover/nav:scale-x-100" aria-hidden />
+            </a>
+          ))}
         </nav>
         <div className="flex items-center gap-2">
-          {signedIn ? (
-            <Button asChild size="sm"><Link to="/overview">Open workspace</Link></Button>
-          ) : (
-            <>
-              <Button asChild variant="ghost" size="sm" className="text-[rgba(237,232,223,0.8)] hover:bg-white/10 hover:text-white"><Link to="/login">Log in</Link></Button>
-              <Button asChild size="sm"><Link to="/signup">Get started</Link></Button>
-            </>
-          )}
+          <div className="hidden items-center gap-2 sm:flex">
+            {signedIn ? (
+              <Button asChild size="sm"><Link to="/overview">Open workspace</Link></Button>
+            ) : (
+              <>
+                <Button asChild variant="ghost" size="sm" className="text-[rgba(237,232,223,0.8)] hover:bg-white/10 hover:text-white"><Link to="/login">Log in</Link></Button>
+                <Button asChild size="sm"><Link to="/signup">Get started</Link></Button>
+              </>
+            )}
+          </div>
+          <Button
+            variant="ghost" size="icon" className="text-white hover:bg-white/10 sm:hidden"
+            aria-label="Open menu" aria-expanded={open} onClick={() => setOpen(true)}
+          >
+            <Menu />
+          </Button>
         </div>
       </div>
-      <nav aria-label="Sections" className="flex justify-center gap-6 border-t border-white/10 py-2 text-[13px] text-[rgba(237,232,223,0.7)] md:hidden">
-        <a href="#features" className="hover:text-white">Features</a>
-        <a href="#how-it-works" className="hover:text-white">How it works</a>
-        <a href="#faq" className="hover:text-white">FAQ</a>
-      </nav>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent side="right" hideClose className="w-[86vw] max-w-[340px] border-white/10 bg-[#050609] text-[#EDE8DF]">
+          <DialogTitle className="sr-only">Navigation</DialogTitle>
+          <div className="flex h-16 items-center justify-between border-b border-white/10 px-5">
+            <Wordmark dark />
+            <Button variant="ghost" size="icon" className="text-white hover:bg-white/10" onClick={() => setOpen(false)} aria-label="Close menu">
+              <span aria-hidden className="text-lg leading-none">×</span>
+            </Button>
+          </div>
+          <nav aria-label="Sections" className="flex flex-col gap-1 p-4 text-[15px]">
+            {SECTIONS.map(([href, label]) => (
+              <a key={href} href={href} onClick={() => setOpen(false)} className="rounded-md px-3 py-3 text-[rgba(237,232,223,0.8)] transition-colors hover:bg-white/[0.06] hover:text-white">
+                {label}
+              </a>
+            ))}
+          </nav>
+          <div className="mt-auto flex flex-col gap-2 border-t border-white/10 p-4">
+            {signedIn ? (
+              <Button asChild size="lg" onClick={() => setOpen(false)}><Link to="/overview">Open workspace</Link></Button>
+            ) : (
+              <>
+                <Button asChild size="lg" onClick={() => setOpen(false)}><Link to="/signup">Get started</Link></Button>
+                <Button asChild size="lg" variant="outline" className={darkGhost} onClick={() => setOpen(false)}><Link to="/login">Log in</Link></Button>
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 }
@@ -54,8 +92,9 @@ function ProductPreview() {
     { ref: "TXN-000000", t: "T+00:00:21", amt: "57.20", s: 0.07, b: "Low", c: "bg-success-soft text-success" },
   ];
   return (
-    <figure className="relative" aria-label="Illustrative product preview">
-      <div className="overflow-hidden rounded-xl border bg-background text-foreground shadow-[0_30px_70px_-30px_rgba(11,26,48,0.45)]">
+    <figure className="group relative" aria-label="Illustrative product preview">
+      <div aria-hidden className="absolute -inset-3 -z-10 rounded-[28px] bg-[radial-gradient(closest-side,rgba(11,127,138,0.16),transparent)] opacity-0 transition-opacity duration-500 group-hover:opacity-100 sm:-inset-6" />
+      <div className="overflow-hidden rounded-xl border bg-background text-foreground shadow-[0_30px_70px_-30px_rgba(11,26,48,0.45)] transition-transform duration-500 ease-out group-hover:-translate-y-1">
         <div className="flex items-center gap-2 border-b bg-card px-4 py-2.5" aria-hidden>
           <span className="size-2.5 rounded-full bg-border" /><span className="size-2.5 rounded-full bg-border" /><span className="size-2.5 rounded-full bg-border" />
           <span className="ml-3 text-xs text-muted-foreground">Overview</span>
@@ -79,8 +118,8 @@ function ProductPreview() {
                 {bars.map((h, i) => <div key={i} className="flex-1 rounded-t-sm bg-primary/70" style={{ height: `${h * 1.5}%` }} />)}
               </div>
             </div>
-            <div className="overflow-hidden rounded-md border bg-card">
-              <table className="tabular w-full text-[10.5px]">
+            <div className="overflow-x-auto rounded-md border bg-card">
+              <table className="tabular w-full min-w-[420px] text-[10.5px]">
                 <thead className="bg-muted/70 text-left text-muted-foreground">
                   <tr><th className="px-2.5 py-1.5 font-medium">Reference</th><th className="px-2 font-medium">Elapsed</th><th className="px-2 text-right font-medium">Amount</th><th className="px-2 text-right font-medium">Model score</th><th className="px-2 font-medium">Risk</th></tr>
                 </thead>
@@ -176,7 +215,7 @@ export function HomePage() {
   const { status } = useAuth();
   const signedIn = status === "authenticated";
   return (
-    <div className="bg-background">
+    <div className="overflow-x-clip bg-background">
       <a href="#content" className="skip-link">Skip to content</a>
       <Nav />
       <main id="content">
@@ -199,7 +238,7 @@ export function HomePage() {
         <section className="py-20" aria-labelledby="preview-h">
           <div className="mx-auto grid max-w-[1240px] grid-cols-1 items-center gap-12 px-5 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)]">
             <Reveal>
-              <h2 id="preview-h" className="text-2xl font-semibold tracking-tight sm:text-3xl">One workspace, from overview to case file</h2>
+              <h2 id="preview-h" className="text-[28px] font-semibold tracking-tight sm:text-4xl">One workspace, from overview to case file</h2>
               <p className="mt-3 leading-relaxed text-muted-foreground">Start with the historical picture, watch a simulated stream, then open any alert to see what drove its score.</p>
               <ul className="mt-6 space-y-3 text-sm">
                 {["Every metric is labelled with its scope", "Scores stay on a 0 to 1 scale, never a probability", "Labels stay hidden until you ask for them"].map((t) => (
@@ -215,18 +254,18 @@ export function HomePage() {
         <section id="features" className="scroll-mt-24 border-y bg-card py-20">
           <div className="mx-auto max-w-[1240px] px-5">
             <Reveal>
-              <h2 className="max-w-2xl text-2xl font-semibold tracking-tight sm:text-3xl">Four views, one investigation workflow</h2>
+              <h2 className="max-w-2xl text-[28px] font-semibold tracking-tight sm:text-4xl">Four views, one investigation workflow</h2>
               <p className="mt-3 max-w-2xl text-muted-foreground">Each page answers a different question about the same model and the same data.</p>
             </Reveal>
             <div className="mt-12 space-y-14">
               {FEATURES.map((f, i) => (
-                <Reveal key={f.title} className="grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-14">
+                <Reveal key={f.title} className="group grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-14">
                   <div className={cn(i % 2 === 1 && "md:order-2")}>
-                    <span className="grid size-10 place-items-center rounded-lg bg-primary-soft text-primary-ink"><f.icon className="size-5" aria-hidden /></span>
+                    <span className="grid size-10 place-items-center rounded-lg bg-primary-soft text-primary-ink transition-transform duration-300 group-hover:scale-110"><f.icon className="size-5" aria-hidden /></span>
                     <h3 className="mt-4 text-xl font-semibold tracking-tight">{f.title}</h3>
                     <p className="mt-2 max-w-md leading-relaxed text-muted-foreground">{f.body}</p>
                   </div>
-                  <div className={cn("h-52 overflow-hidden rounded-xl border bg-muted/60", i % 2 === 1 && "md:order-1")} role="img" aria-label={`Schematic illustration for ${f.title}`}>
+                  <div className={cn("h-52 overflow-hidden rounded-xl border bg-muted/60 transition-all duration-300 group-hover:-translate-y-1 group-hover:border-primary/30 group-hover:shadow-pop", i % 2 === 1 && "md:order-1")} role="img" aria-label={`Schematic illustration for ${f.title}`}>
                     {f.visual}
                   </div>
                 </Reveal>
@@ -243,7 +282,7 @@ export function HomePage() {
           <div className="mx-auto grid max-w-[1240px] grid-cols-1 gap-10 px-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
             <Reveal>
               <p className="text-xs font-medium uppercase tracking-[0.14em] text-cyan-200">Pattern Lab</p>
-              <h2 id="sim-h" className="mt-3 text-2xl font-semibold tracking-tight text-[#F3EFE7] sm:text-3xl">Similar records, not networks of people</h2>
+              <h2 id="sim-h" className="mt-3 text-[28px] font-semibold tracking-tight text-[#F3EFE7] sm:text-4xl">Similar records, not networks of people</h2>
               <p className="mt-4 max-w-md leading-relaxed text-[rgba(237,232,223,0.68)]">
                 Transactions are grouped by how alike they are in the model's feature space. It's a way to see structure in the data, not evidence that any accounts are connected.
               </p>
@@ -255,7 +294,7 @@ export function HomePage() {
                   ["Prevalence from labels", "Known fraud rates come from the labelled training split."],
                   ["Small groups flagged", "Groups with very few fraud cases are marked as unreliable."],
                 ].map(([t, d]) => (
-                  <div key={t} className="rounded-xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-sm">
+                  <div key={t} className="rounded-xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-cyan-300/25 hover:bg-white/[0.06]">
                     <dt className="text-sm font-semibold text-[#F3EFE7]">{t}</dt>
                     <dd className="mt-1.5 text-[13px] leading-relaxed text-[rgba(237,232,223,0.6)]">{d}</dd>
                   </div>
@@ -268,11 +307,11 @@ export function HomePage() {
         {/* Workflow */}
         <section id="how-it-works" className="scroll-mt-24 py-20">
           <div className="mx-auto max-w-[1240px] px-5">
-            <Reveal><h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">How it works</h2></Reveal>
+            <Reveal><h2 className="text-[28px] font-semibold tracking-tight sm:text-4xl">How it works</h2></Reveal>
             <ol className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-4">
               {STEPS.map((s, i) => (
                 <li key={s.t} className="relative">
-                  <Reveal delay={i * 0.05} className="h-full rounded-xl border bg-card p-5 shadow-card">
+                  <Reveal delay={i * 0.05} className="h-full rounded-xl border bg-card p-5 shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-pop">
                     <div className="flex items-center gap-3">
                       <span className="tabular grid size-9 place-items-center rounded-full bg-navy-900 text-sm font-semibold text-white">{i + 1}</span>
                       <s.icon className="size-5 text-primary" aria-hidden />
@@ -291,7 +330,7 @@ export function HomePage() {
         <section className="border-y bg-card py-20">
           <div className="mx-auto grid max-w-[1240px] grid-cols-1 gap-10 px-5 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)]">
             <Reveal>
-              <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">What the data is, and isn't</h2>
+              <h2 className="text-[28px] font-semibold tracking-tight sm:text-4xl">What the data is, and isn't</h2>
               <p className="mt-3 text-muted-foreground">FINEXA is built for analysis and demonstration. These limits are part of the product, not fine print.</p>
             </Reveal>
             <Reveal delay={0.06}>
@@ -313,7 +352,7 @@ export function HomePage() {
         <section id="faq" className="scroll-mt-24 py-20" aria-labelledby="faq-h">
           <div className="mx-auto max-w-[820px] px-5">
             <Reveal>
-              <h2 id="faq-h" className="text-2xl font-semibold tracking-tight sm:text-3xl">Questions, answered plainly</h2>
+              <h2 id="faq-h" className="text-[28px] font-semibold tracking-tight sm:text-4xl">Questions, answered plainly</h2>
               <div className="mt-8"><Accordion items={FAQ} /></div>
             </Reveal>
           </div>
@@ -325,7 +364,7 @@ export function HomePage() {
           <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_50%,rgba(3,4,7,0.85)_0%,rgba(3,4,7,0.35)_70%,rgba(3,4,7,0.1)_100%)]" />
           <Reveal className="mx-auto flex max-w-[1240px] flex-col items-start justify-between gap-6 px-5 md:flex-row md:items-center">
             <div>
-              <h2 className="text-2xl font-semibold tracking-tight text-[#F3EFE7] sm:text-3xl">Ready to explore the workspace?</h2>
+              <h2 className="text-[28px] font-semibold tracking-tight text-[#F3EFE7] sm:text-4xl">Ready to explore the workspace?</h2>
               <p className="mt-2 text-[rgba(237,232,223,0.68)]">Create an account and start a replay in a few clicks.</p>
             </div>
             <div className="flex flex-wrap gap-3">
