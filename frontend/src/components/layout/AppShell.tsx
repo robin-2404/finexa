@@ -32,6 +32,9 @@ const titleFor = (path: string) => TITLES.find(([re]) => re.test(path))?.[1] ?? 
 function NavList({ collapsed, onNavigate, indicatorId }: { collapsed?: boolean; onNavigate?: () => void; indicatorId: string }) {
   return (
     <nav aria-label="Primary" className="flex flex-col gap-1 px-3">
+      {!collapsed && (
+        <p className="px-3 pb-1.5 pt-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-shell-text-muted/70">Workspace</p>
+      )}
       {NAV.map(({ to, label, icon: Icon }) => (
         <Tooltip key={to} delayDuration={collapsed ? 100 : 100000}>
           <TooltipTrigger asChild>
@@ -41,8 +44,9 @@ function NavList({ collapsed, onNavigate, indicatorId }: { collapsed?: boolean; 
               aria-label={collapsed ? label : undefined}
               className={({ isActive }) =>
                 cn(
-                  "group relative flex h-11 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors",
-                  isActive ? "text-white" : "text-navy-200 hover:bg-navy-800 hover:text-white",
+                  "group relative flex h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium outline-none transition-colors",
+                  "focus-visible:ring-2 focus-visible:ring-shell-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-shell-navy",
+                  isActive ? "text-white" : "text-shell-text-muted hover:bg-shell-elevated/60 hover:text-shell-text",
                   collapsed && "justify-center px-0",
                 )
               }
@@ -52,12 +56,12 @@ function NavList({ collapsed, onNavigate, indicatorId }: { collapsed?: boolean; 
                   {isActive && (
                     <motion.span
                       layoutId={indicatorId}
-                      className="absolute inset-0 rounded-md bg-navy-700 shadow-[inset_2px_0_0_#2dd4bf]"
+                      className="absolute inset-0 rounded-lg bg-shell-elevated shadow-[inset_2px_0_0_var(--color-shell-accent)]"
                       transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
                     />
                   )}
-                  <Icon className="relative size-[18px] shrink-0" aria-hidden />
-                  {!collapsed && <span className="relative">{label}</span>}
+                  <Icon className={cn("relative size-[18px] shrink-0", isActive && "text-shell-accent")} aria-hidden strokeWidth={2} />
+                  {!collapsed && <span className="relative truncate">{label}</span>}
                 </>
               )}
             </NavLink>
@@ -109,8 +113,8 @@ function DatasetChip() {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <span tabIndex={0} className="hidden max-w-64 items-center gap-2 truncate rounded-md border bg-card px-2.5 py-1 text-xs text-muted-foreground xl:inline-flex">
-          <span className="truncate font-medium text-foreground">{ds.data.source_file}</span>
+        <span tabIndex={0} className="hidden max-w-64 items-center gap-2 truncate rounded-md border border-shell-border bg-shell-elevated px-2.5 py-1 text-xs text-shell-text-muted xl:inline-flex">
+          <span className="truncate font-medium text-shell-text">{ds.data.source_file}</span>
           <span className="tabular shrink-0">{formatInt(ds.data.rows)} rows</span>
         </span>
       </TooltipTrigger>
@@ -135,10 +139,13 @@ function AccountMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center gap-2 rounded-md border bg-card py-1 pl-1 pr-2 text-sm hover:bg-accent" aria-label="Account menu">
-          <span className="grid size-7 place-items-center rounded bg-navy-900 text-xs font-semibold text-white" aria-hidden>{initial}</span>
+        <button
+          className="flex items-center gap-2 rounded-md border border-shell-border bg-shell-elevated py-1 pl-1 pr-2 text-sm text-shell-text outline-none transition-colors hover:bg-shell-elevated/70 focus-visible:ring-2 focus-visible:ring-shell-accent/60"
+          aria-label="Account menu"
+        >
+          <span className="grid size-7 place-items-center rounded bg-shell-navy text-xs font-semibold text-shell-accent" aria-hidden>{initial}</span>
           <span className="hidden max-w-40 truncate text-[13px] md:inline">{user?.email}</span>
-          <ChevronsUpDown className="size-3.5 text-muted-foreground" aria-hidden />
+          <ChevronsUpDown className="size-3.5 text-shell-text-muted" aria-hidden />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -220,19 +227,19 @@ export function AppShell() {
       <a href="#main" className="skip-link">Skip to content</a>
 
       <aside
-        className={cn("fixed inset-y-0 left-0 z-30 hidden flex-col bg-navy-900 transition-[width] duration-200 lg:flex", collapsed ? "w-[68px]" : "w-[248px]")}
+        className={cn("fixed inset-y-0 left-0 z-30 hidden flex-col border-r border-shell-border bg-shell-navy transition-[width] duration-200 lg:flex", collapsed ? "w-[68px]" : "w-[248px]")}
         aria-label="Sidebar"
       >
-        <div className={cn("flex h-14 items-center", collapsed ? "justify-center" : "px-5")}>
-          <Link to="/overview" aria-label="FINEXA overview">
+        <div className={cn("flex h-16 items-center border-b border-shell-border", collapsed ? "justify-center" : "px-5")}>
+          <Link to="/overview" aria-label="FINEXA overview" className="rounded-md outline-none focus-visible:ring-2 focus-visible:ring-shell-accent/60">
             {collapsed ? <Wordmark className="[&>span:last-child]:hidden" dark /> : <Wordmark dark />}
           </Link>
         </div>
-        <div className="mt-3 flex-1"><NavList collapsed={collapsed} indicatorId="nav-active-desktop" /></div>
-        <div className={cn("border-t border-navy-800 p-3", collapsed && "flex justify-center")}>
+        <div className="mt-4 flex-1"><NavList collapsed={collapsed} indicatorId="nav-active-desktop" /></div>
+        <div className={cn("border-t border-shell-border p-3", collapsed && "flex justify-center")}>
           <Button
             variant="ghost" size={collapsed ? "icon" : "sm"}
-            className="w-full justify-start text-navy-300 hover:bg-navy-800 hover:text-white data-[c=true]:w-9"
+            className="w-full justify-start text-shell-text-muted hover:bg-shell-elevated hover:text-shell-text data-[c=true]:w-9"
             data-c={collapsed}
             onClick={() => setCollapsed((c) => !c)}
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -244,19 +251,23 @@ export function AppShell() {
       </aside>
 
       <Dialog open={drawer} onOpenChange={setDrawer}>
-        <DialogContent side="left" className="bg-navy-900 text-white" hideClose aria-describedby={undefined}>
+        <DialogContent side="left" className="border-r border-shell-border bg-shell-navy text-shell-text" hideClose aria-describedby={undefined}>
           <DialogTitle className="sr-only">Navigation</DialogTitle>
-          <div className="flex h-14 items-center px-5"><Wordmark dark /></div>
-          <div className="mt-3"><NavList onNavigate={() => setDrawer(false)} indicatorId="nav-active-drawer" /></div>
+          <div className="flex h-16 items-center border-b border-shell-border px-5"><Wordmark dark /></div>
+          <div className="mt-4"><NavList onNavigate={() => setDrawer(false)} indicatorId="nav-active-drawer" /></div>
         </DialogContent>
       </Dialog>
 
       <div className={cn("transition-[padding] duration-200", collapsed ? "lg:pl-[68px]" : "lg:pl-[248px]")}>
-        <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b bg-card/90 px-4 backdrop-blur md:px-6">
-          <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setDrawer(true)} aria-label="Open navigation">
+        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-shell-border bg-shell-surface/95 px-4 text-shell-text backdrop-blur md:px-6">
+          <Button
+            variant="ghost" size="icon"
+            className="text-shell-text-muted hover:bg-shell-elevated hover:text-shell-text lg:hidden"
+            onClick={() => setDrawer(true)} aria-label="Open navigation"
+          >
             <Menu />
           </Button>
-          <p className="min-w-0 flex-1 truncate text-[15px] font-semibold" aria-live="polite">{title}</p>
+          <p className="min-w-0 flex-1 truncate text-[15px] font-semibold text-shell-text" aria-live="polite">{title}</p>
           <DatasetChip />
           <div className="hidden items-center gap-2 sm:flex">
             <ConnectionPill />
@@ -264,7 +275,7 @@ export function AppShell() {
           </div>
           <AccountMenu />
         </header>
-        <div className="flex flex-wrap items-center gap-2 border-b bg-card px-4 py-2 sm:hidden">
+        <div className="flex flex-wrap items-center gap-2 border-b border-shell-border bg-shell-surface px-4 py-2 sm:hidden">
           <ConnectionPill />
           <SimulationPill />
         </div>

@@ -32,6 +32,17 @@
   --color-navy-300: #9fb2cc;
   --color-navy-200: #c4d1e2;
 
+  /* Authenticated app shell palette (sidebar, header, nav). Kept separate from the
+     navy-* tokens above so the public landing page and auth screens are unaffected. */
+  --color-shell-navy: #0b1f3b;
+  --color-shell-bg: #0f172a;
+  --color-shell-surface: #111827;
+  --color-shell-elevated: #17243a;
+  --color-shell-accent: #22d3ee;
+  --color-shell-text: #f8fafc;
+  --color-shell-text-muted: #94a3b8;
+  --color-shell-border: #1e293b;
+
   --color-danger: #b42335;
   --color-danger-soft: #fdecee;
   --color-warning: #9a5200;
